@@ -15,6 +15,9 @@ export async function POST(req) {
     const department = sanitizeInput(body.department, 100);
     const fraud_type = sanitizeInput(body.fraud_type, 100);
     const amount = sanitizeAmount(body.amount);
+    
+    // Safely capture the incoming whistleblower evidence array
+    const evidenceFiles = Array.isArray(body.evidence) ? body.evidence : [];
 
     if (!description || description.length < 10) {
       return NextResponse.json({ error: 'Description too short' }, { status: 400 });
@@ -28,11 +31,11 @@ export async function POST(req) {
 
     const token = randomUUID();
 
-    // Insert with parameterized query (prevents SQL injection)
+    // Insert with parameterized query (Includes evidence array serialized as a JSON string)
     const reportResult = await query(
-      `INSERT INTO reports (anonymous_token, description, department, fraud_type, amount, status)
-       VALUES ($1, $2, $3, $4, $5, 'new') RETURNING id`,
-      [token, description, department || null, fraud_type || null, amount]
+      `INSERT INTO reports (anonymous_token, description, department, fraud_type, amount, status, evidence)
+       VALUES ($1, $2, $3, $4, $5, 'new', $6) RETURNING id`,
+      [token, description, department || null, fraud_type || null, amount, JSON.stringify(evidenceFiles)]
     );
     const reportId = reportResult.rows[0].id;
 
@@ -72,7 +75,6 @@ export async function POST(req) {
     await logAction('REPORT_SUBMITTED', 'anonymous', reportId, 'report', {
       fraud_type: aiData.fraud_type,
       severity: finalSeverity,
-      // deliberately NO ip, NO user agent, NO location
     });
     await logAction('AI_TRIAGE_COMPLETE', 'system', reportId, 'report', {
       severity: finalSeverity,
