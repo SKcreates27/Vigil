@@ -16,7 +16,14 @@ const DEPARTMENTS = ['Finance', 'HR', 'Procurement', 'IT', 'Executive', 'Operati
 
 export default function ReportPage() {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ fraud_type: '', description: '', department: '', amount: '', date: '', evidence: [] });
+  const [form, setForm] = useState<{
+    fraud_type: string;
+    description: string;
+    department: string;
+    amount: string;
+    date: string;
+    evidence: Array<{ name: string; size: number; type: string }>;
+  }>({ fraud_type: '', description: '', department: '', amount: '', date: '', evidence: [] });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ token: string; fraud_type: string; severity: string; ai_summary: string } | null>(null);
   const [error, setError] = useState('');
@@ -247,6 +254,47 @@ export default function ReportPage() {
                 <input type="number" placeholder="e.g. 500000" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} style={{ marginTop: '6px' }} />
                 <div style={{ fontSize: '11px', color: '#76777d', marginTop: '4px' }}>Cases exceeding ₹10,00,000 are auto-escalated to critical severity</div>
               </div>
+
+              {/* FIXED PLACEHOLDER: EVIDENCE UPLOAD INSIDE THE CARD DESIGN CONTAINER CONTAINER CONTAINER */}
+              <div style={{ marginTop: '10px', borderTop: '1px solid #c6c6cd', paddingTop: '16px' }}>
+                <label className="label-caps">Evidence Upload (Evidence Locker)</label>
+                <div style={{ border: '1px dashed #c6c6cd', borderRadius: '2px', padding: '16px', textAlign: 'center', background: '#f8f9ff', marginTop: '6px' }}>
+                  <input 
+                    type="file" 
+                    multiple 
+                    id="file-upload"
+                    style={{ display: 'none' }} 
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        const fileArray = Array.from(e.target.files).map(file => ({
+                          name: file.name,
+                          size: file.size,
+                          type: file.type
+                        }));
+                        setForm(f => ({ ...f, evidence: fileArray }));
+                      }
+                    }}
+                  />
+                  <label htmlFor="file-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '24px', color: '#76777d' }}>cloud_upload</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#131b2e' }}>Click to attach supporting files</span>
+                    <span style={{ fontSize: '11px', color: '#76777d' }}>PDF, Images, CSV, or Text Logs (Max 10MB total)</span>
+                  </label>
+                </div>
+                {form.evidence && form.evidence.length > 0 && (
+                  <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {form.evidence.map((file, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#ffffff', border: '1px solid #c6c6cd', borderRadius: '2px', fontSize: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0b1c30' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#76777d' }}>description</span>
+                          <span style={{ fontWeight: 500 }}>{file.name}</span>
+                        </div>
+                        <span style={{ fontSize: '11px', color: '#76777d' }}>{(file.size / 1024).toFixed(1)} KB</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -279,6 +327,21 @@ export default function ReportPage() {
               </div>
               <div className="label-caps" style={{ marginBottom: '6px' }}>Description</div>
               <p style={{ fontSize: '13px', color: '#45464d', lineHeight: 1.6 }}>{form.description}</p>
+
+              {/* DYNAMIC CONFIRMATION ON STEP 3 SUMMARY PANEL AREA */}
+              {form.evidence && form.evidence.length > 0 && (
+                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #c6c6cd' }}>
+                  <div className="label-caps" style={{ marginBottom: '6px' }}>Attached Evidence ({form.evidence.length})</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {form.evidence.map((file, idx) => (
+                      <div key={idx} style={{ background: '#f8f9ff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '4px 8px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#131b2e' }}>attachment</span>
+                        <span>{file.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div style={{ padding: '14px 16px', background: '#ffffff', border: '1px solid #c6c6cd', borderRadius: '2px', borderLeft: '3px solid #131b2e', marginBottom: '20px' }}>
