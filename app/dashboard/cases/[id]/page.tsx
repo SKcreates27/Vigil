@@ -9,6 +9,7 @@ interface CaseData {
   severity: string; urgency: string; department: string; amount: number;
   regulatory_flag: boolean; ai_summary: string; report_date: string;
   description: string; anonymous_token: string;
+  evidence?: Array<{ name: string; size: number; type: string }>;
 }
 interface Message { id: number; sender_role: string; content: string; created_at: string; }
 interface AuditEntry { id: number; action: string; actor: string; created_at: string; }
@@ -326,31 +327,51 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
 
-            {/* Evidence list */}
-            <div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '5px 0', borderBottom: '1px solid #c6c6cd', marginBottom: '6px' }}>
-                <div className="label-caps">Artifact</div>
-                <div className="label-caps">SHA-256</div>
-              </div>
-              {evidence.length === 0 ? (
-                <div style={{ padding: '16px', textAlign: 'center', background: '#f8f9ff', border: '1px dashed #c6c6cd', borderRadius: '2px', color: '#76777d', fontSize: '12px' }}>
-                  No evidence uploaded yet
-                </div>
-              ) : (
-                evidence.map(ev => (
-                  <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #c6c6cd' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                      <FileIcon />
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600 }}>{ev.file_name}</div>
-                        {ev.is_privileged && <span className="badge badge-medium" style={{ fontSize: '10px', padding: '1px 5px' }}>PRIVILEGED</span>}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#76777d' }}>{ev.file_hash?.substring(0, 8)}...</div>
-                  </div>
-                ))
-              )}
-            </div>
+           {/* Evidence list */}
+<div>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '5px 0', borderBottom: '1px solid #c6c6cd', marginBottom: '6px' }}>
+    <div className="label-caps">Artifact</div>
+    <div className="label-caps">SHA-256 / Size</div>
+  </div>
+  
+  {/* 1. Render Whistleblower uploads attached to CaseData */}
+  {caseData?.evidence && caseData.evidence.length > 0 && (
+    caseData.evidence.map((file: { name: string; size: number; type: string }, idx: number) => (
+      <div key={`wb-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #c6c6cd', background: '#fcfdff' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+          <FileIcon />
+          <div>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#0b1c30' }}>{file.name}</div>
+            <span className="badge badge-new" style={{ fontSize: '9px', padding: '1px 4px', background: '#e5eeff', color: '#131b2e' }}>WHISTLEBLOWER ATTACHMENT</span>
+          </div>
+        </div>
+        <div style={{ fontSize: '10px', color: '#76777d', fontWeight: 500 }}>
+          {file.size ? `${(file.size / 1024).toFixed(1)} KB` : 'Attached'}
+        </div>
+      </div>
+    ))
+  )}
+
+  {/* 2. Render core operational system files */}
+  {evidence.length === 0 && (!caseData?.evidence || caseData.evidence.length === 0) ? (
+    <div style={{ padding: '16px', textAlign: 'center', background: '#f8f9ff', border: '1px dashed #c6c6cd', borderRadius: '2px', color: '#76777d', fontSize: '12px' }}>
+      No evidence uploaded yet
+    </div>
+  ) : (
+    evidence.map(ev => (
+      <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #c6c6cd' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+          <FileIcon />
+          <div>
+            <div style={{ fontSize: '12px', fontWeight: 600 }}>{ev.file_name}</div>
+            {ev.is_privileged && <span className="badge badge-medium" style={{ fontSize: '10px', padding: '1px 5px' }}>PRIVILEGED</span>}
+          </div>
+        </div>
+        <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#76777d' }}>{ev.file_hash?.substring(0, 8)}...</div>
+      </div>
+    ))
+  )}
+</div>
 
             {/* Chain of custody */}
             <div style={{ border: '1px solid #c6c6cd', borderRadius: '2px', padding: '12px' }}>
