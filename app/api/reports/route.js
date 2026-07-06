@@ -5,6 +5,7 @@ import { triageReport } from '@/lib/gemini';
 import { sanitizeInput, sanitizeAmount } from '@/lib/security';
 import { randomUUID } from 'crypto';
 
+// 1. POST HANDLER: Submits a new whistleblower report
 export async function POST(req) {
   try {
     // Never log or store the IP — this is by design
@@ -91,6 +92,22 @@ export async function POST(req) {
 
   } catch (err) {
     console.error('Report submission error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// 2. GET HANDLER: Resolves the 405 error and loads cases into the investigator dashboard
+export async function GET() {
+  try {
+    const result = await query(
+      `SELECT id, anonymous_token, description, department, fraud_type, amount, status, severity, urgency, regulatory_flag, evidence, created_at AS report_date 
+       FROM reports 
+       ORDER BY created_at DESC`
+    );
+    
+    return NextResponse.json(result.rows || []);
+  } catch (err) {
+    console.error('Failed to fetch triage queue reports:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
