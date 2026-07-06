@@ -5,13 +5,26 @@ import { authOptions } from '@/lib/auth';
 import { logAction } from '@/lib/audit';
 
 export async function GET(req, { params }) {
+  // 1. Check for valid investigator session context
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { id } = await params;
+    // Safely unwrap parameters if structural changes require it
+    const resolvedParams = await params;
+    let id = resolvedParams?.id;
 
-    // 1. Fetch case joined with report data (now including the new evidence column)
+    // Fallback: If parameters map dynamically via internal search query paths (e.g., nxtPid)
+    if (!id) {
+      const { searchParams } = new URL(req.url);
+      id = searchParams.get('id') || searchParams.get('nxtPid');
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: 'Missing Case ID' }, { status: 400 });
+    }
+
+    // 2. Fetch case joined with report data (including whistleblower evidence locker columns)
     const caseResult = await query(
       `SELECT c.*, r.fraud_type, r.severity, r.urgency, r.department, r.amount, r.status as report_status,
               r.regulatory_flag, r.ai_summary, r.created_at as report_date, r.description, r.anonymous_token, r.evidence
@@ -33,7 +46,7 @@ export async function GET(req, { params }) {
       }
     }
 
-    // 2. Wrap auxiliary queries to prevent a missing table/column from breaking the login state
+    // 3. Wrap auxiliary queries to prevent missing schemas from throwing 401/500 drops
     let evidenceRows = [];
     try {
       const evidenceResult = await query('SELECT * FROM evidence WHERE case_id = $1 ORDER BY uploaded_at DESC', [id]);
@@ -44,7 +57,6 @@ export async function GET(req, { params }) {
 
     let auditRows = [];
     try {
-      // Tries audit_logs first, falls back to audit_log if it fails
       const auditResult = await query('SELECT * FROM audit_logs WHERE target_id = $1 ORDER BY created_at DESC LIMIT 20', [currentCase.report_id]);
       auditRows = auditResult.rows;
     } catch (err) {
@@ -62,7 +74,6 @@ export async function GET(req, { params }) {
       messageRows = messagesResult.rows;
     } catch (err) {
       try {
-        // Fallback check if your system uses anonymous_token
         const messagesResult = await query('SELECT * FROM messages WHERE report_token = $1 ORDER BY created_at ASC', [currentCase.anonymous_token]);
         messageRows = messagesResult.rows;
       } catch (innerErr) {
@@ -70,7 +81,7 @@ export async function GET(req, { params }) {
       }
     }
 
-    // 3. Return structurally sound values back to the UI
+    // 4. Return structurally clean dataset
     return NextResponse.json({
       case: currentCase,
       evidence: evidenceRows || [],
@@ -89,7 +100,9 @@ export async function PATCH(req, { params }) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { id } = await params;
+    const resolvedParams = await params;
+    const id = resolvedParams?.id;
+    
     const body = await req.json();
     const { status, notes, is_legal_hold } = body;
 
