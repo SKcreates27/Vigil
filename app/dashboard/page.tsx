@@ -18,6 +18,7 @@ function TriageContent() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => { fetchCases(); }, [severityFilter]);
 
@@ -25,19 +26,28 @@ function TriageContent() {
     setLoading(true);
     const params = new URLSearchParams();
     if (severityFilter) params.set('severity', severityFilter);
-    const res = await fetch(`/api/cases?${params}`);
+    const res = await fetch(`/api/reports?${params}`);
     const data = await res.json();
     setCases(Array.isArray(data) ? data : []);
     setLoading(false);
   }
 
   const filtered = cases.filter(c => {
-    if (activeTab === 'new') return c.status === 'new';
-    if (activeTab === 'active') return c.status === 'under_investigation';
-    if (activeTab === 'hold') return c.status === 'pending_review';
-    if (activeTab === 'resolved') return c.status === 'resolved';
-    return true;
-  });
+  if (activeTab === 'new') return c.status === 'new';
+  if (activeTab === 'active') return c.status === 'under_investigation';
+  if (activeTab === 'hold') return c.status === 'pending_review';
+  if (activeTab === 'resolved') return c.status === 'resolved';
+  return true;
+}).filter(c => {
+  if (!searchQuery) return true;
+  const query = searchQuery.toLowerCase();
+  return (
+    c.description?.toLowerCase().includes(query) ||
+    c.fraud_type?.toLowerCase().includes(query) ||
+    c.department?.toLowerCase().includes(query) ||
+    String(c.id).includes(query)
+  );
+});
 
   const stats = {
     total: cases.length,
@@ -57,11 +67,18 @@ function TriageContent() {
               Review and assign <strong style={{ color: '#0b1c30' }}>{cases.length} incidents</strong> from automated detection streams.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>filter_list</span>
-              Filter
-            </button>
+         <div style={{ display: 'flex', gap: '10px' }}>
+  <input 
+    type="text" 
+    placeholder="Search incidents..." 
+    value={searchQuery}
+    onChange={e => setSearchQuery(e.target.value)}
+    style={{ padding: '4px 12px', fontSize: '13px', border: '1px solid #c6c6cd', borderRadius: '2px', width: '180px' }}
+  />
+  <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+    <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>filter_list</span>
+    Filter
+  </button>
             <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>download</span>
               Export CSV

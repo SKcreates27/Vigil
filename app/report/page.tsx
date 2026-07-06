@@ -16,7 +16,7 @@ const DEPARTMENTS = ['Finance', 'HR', 'Procurement', 'IT', 'Executive', 'Operati
 
 export default function ReportPage() {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ fraud_type: '', description: '', department: '', amount: '', date: '' });
+  const [form, setForm] = useState({ fraud_type: '', description: '', department: '', amount: '', date: '', evidence: [] });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ token: string; fraud_type: string; severity: string; ai_summary: string } | null>(null);
   const [error, setError] = useState('');

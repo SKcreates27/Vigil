@@ -30,6 +30,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [status, router]);
 
   const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   if (status === 'loading') {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#76777d', fontSize: '13px' }}>Authenticating...</div>;
@@ -76,12 +77,33 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
         {/* Right icons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <button className="btn-ghost" style={{ padding: '8px', color: '#76777d' }} title="Search" onClick={() => setShowSearch(s => !s)}>{Icons.search}</button>
-          <button className="btn-ghost" style={{ padding: '8px', color: '#76777d', position: 'relative' }} title="Notifications">
-            {Icons.bell}
-            <div style={{ position: 'absolute', top: '6px', right: '6px', width: '7px', height: '7px', background: '#ba1a1a', borderRadius: '50%', border: '1.5px solid white' }} />
-          </button>
-          <button className="btn-ghost" style={{ padding: '8px', color: '#76777d' }} title="Settings">{Icons.settings}</button>
+  <button className="btn-ghost" style={{ padding: '8px', color: '#76777d' }} title="Search" onClick={() => setShowSearch(s => !s)}>{Icons.search}</button>
+  
+  {/* Updated Notification Button */}
+  <button 
+    className="btn-ghost" 
+    style={{ padding: '8px', color: '#76777d', position: 'relative' }} 
+    title="Notifications"
+    onClick={() => setShowNotifications(s => !s)}
+  >
+    {Icons.bell}
+    <div style={{ position: 'absolute', top: '6px', right: '6px', width: '7px', height: '7px', background: '#ba1a1a', borderRadius: '50%', border: '1.5px solid white' }} />
+  </button>
+
+  {/* Interactive Notification Dropdown Box */}
+  {showNotifications && (
+    <div style={{ position: 'absolute', top: '50px', right: '60px', width: '280px', background: '#ffffff', border: '1px solid #c6c6cd', borderRadius: '2px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 110, padding: '12px' }}>
+      <div style={{ fontSize: '11px', fontWeight: 700, color: '#0b1c30', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px', borderBottom: '1px solid #c6c6cd', paddingBottom: '6px' }}>System Alerts</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ fontSize: '12px', lineHeight: 1.4 }}>
+          <span style={{ fontWeight: 600, color: '#ba1a1a' }}>[ALERT]</span> New encrypted whistleblower case has entered the Triage Queue.
+        </div>
+        <div style={{ fontSize: '11px', color: '#76777d' }}>Just now</div>
+      </div>
+    </div>
+  )}
+
+  <button className="btn-ghost" style={{ padding: '8px', color: '#76777d' }} title="Settings">{Icons.settings}</button>
           <div style={{ width: '1px', height: '24px', background: '#c6c6cd', margin: '0 8px' }} />
           <div style={{ width: '32px', height: '32px', borderRadius: '2px', background: '#131b2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: 'white', cursor: 'pointer', flexShrink: 0 }} onClick={() => signOut({ callbackUrl: '/login' })} title="Sign out">
             {session.user?.email?.[0]?.toUpperCase()}
