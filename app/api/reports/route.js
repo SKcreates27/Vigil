@@ -40,23 +40,32 @@ export async function POST(req) {
     );
     const reportId = reportResult.rows[0].id;
 
-    // AI triage
+    // AI triage properties mapped cleanly to structural state defaults
     let aiData = {
       fraud_type: fraud_type || 'other',
       severity: 'medium',
       urgency: 'routine',
       department_likely: department || 'unknown',
-      ai_summary: '',
+      ai_summary: 'Automated extraction compilation processing failed.',
       suggested_steps: [],
     };
+
     try {
-      aiData = await triageReport(description, amount, department);
+      const generatedTriage = await triageReport(description, amount, department);
+      if (generatedTriage) {
+        aiData = {
+          ...aiData,
+          ...generatedTriage,
+          // Extra safeguard: Ensure key fallback mapping aligns perfectly
+          department_likely: generatedTriage.department_likely || generatedTriage.department || department || 'unknown'
+        };
+      }
     } catch (aiErr) {
-      console.error('AI triage failed:', aiErr.message);
+      console.error('Critical: Gemini fallback logic engaged. AI triage execution error:', aiErr.message);
     }
 
     // Severity escalation rules
-    let finalSeverity = aiData.severity;
+    let finalSeverity = aiData.severity || 'medium';
     let regulatoryFlag = false;
     if (amount && amount > 1000000) finalSeverity = 'critical';
     if (aiData.fraud_type === 'insider_trading') { finalSeverity = 'critical'; regulatoryFlag = true; }
@@ -69,7 +78,7 @@ export async function POST(req) {
 
     await query(
       `INSERT INTO cases (report_id, status, ai_steps, notes) VALUES ($1, 'new', $2, $3)`,
-      [reportId, JSON.stringify(aiData.suggested_steps), 'Auto-created from anonymous report. AI triage complete.']
+      [reportId, JSON.stringify(aiData.suggested_steps || []), 'Auto-created from anonymous report. AI triage complete.']
     );
 
     // Audit log — no IP stored, actor is 'anonymous'
