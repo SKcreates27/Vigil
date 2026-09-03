@@ -58,7 +58,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 20px', borderRight: '1px solid #c6c6cd', height: '100%', minWidth: '240px' }}>
             <Logo size={28} />
             <div>
-              <div style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.02em' }}>FraudWatch360</div>
+              <div style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.02em' }}>Vigil</div>
               <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', color: '#76777d', textTransform: 'uppercase' }}>Internal Investigation Unit</div>
             </div>
           </Link>

@@ -16,7 +16,7 @@ export default function Home() {
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Logo size={32} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', color: '#0b1c30' }}>FraudWatch360</div>
+            <div style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', color: '#0b1c30' }}>Vigil</div>
             <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', color: '#76777d', textTransform: 'uppercase', marginTop: '-2px' }}>Internal Investigation Unit</div>
           </div>
         </Link>
@@ -128,7 +128,7 @@ export default function Home() {
       <div style={{ marginTop: '64px', borderTop: '1px solid #c6c6cd', padding: '16px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', fontSize: '12px', color: '#76777d' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Logo size={18} />
-          <span>FraudWatch360 · Internal Investigation Unit · v1.0.0-STABLE</span>
+          <span>Vigil · Internal Investigation Unit · v1.0.0-STABLE</span>
         </div>
         <div style={{ display: 'flex', gap: '24px' }}>
           <span style={{ cursor: 'pointer' }}>Security Audit</span>

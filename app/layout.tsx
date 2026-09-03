@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'FraudWatch360 | Internal Investigation Unit',
+  title: 'Vigil | Internal Investigation Unit',
   description: 'Enterprise fraud reporting and investigation platform',
 };
 

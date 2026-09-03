@@ -10,7 +10,7 @@ async function run() {
   const client = await pool.connect();
   await client.query(
     'INSERT INTO investigators (email, password_hash, role) VALUES ($1, $2, $3) ON CONFLICT (email) DO UPDATE SET password_hash = $2',
-    ['admin@fraudwatch360.com', hash, 'admin']
+    ['admin@Vigil.com', hash, 'admin']
   );
   const result = await client.query('SELECT email FROM investigators');
   console.log('Investigators in Neon:', result.rows);
