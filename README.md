@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛡️ FraudWatch360
 
-## Getting Started
+> An intelligent, end-to-end fraud intake, investigation, and regulatory reporting platform built for high-stakes fraud response teams.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## The Problem & The Solution
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Most fraud reporting channels suffer from two big bottlenecks:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Victims are left in the dark:** Friction-heavy intake forms, zero status visibility, and broken communication channels.
+2. **Investigators are overwhelmed:** Sifting through unstructured reports, manually assessing threat levels, and spending hours writing compliance-heavy Suspicious Activity Reports (SAR).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**FraudWatch360** bridges this gap. It provides a secure, tokenized public portal for seamless anonymous fraud reporting, paired with an investigator command center powered by Google Gemini to automate threat scoring, evidence handling, and SAR drafting.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Core Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* **Zero-Friction Anonymous Reporting:** Users submit fraud reports securely without forced sign-ups and receive an encrypted access token to check real-time status and chat directly with investigators.
+* **Gemini-Powered SAR Generation:** Automates the heavy lifting of compliance by extracting case details and drafting regulatory-ready Suspicious Activity Reports (SAR).
+* **Investigator Command Center:** Real-time triage dashboards to track active cases, prioritize high-risk incidents, and assign case workflows.
+* **Digital Evidence Vault:** Centralized evidence storage and tracking with audit-trail integrity to maintain a clean chain of custody.
+* **Role-Based Security & Audit Logs:** NextAuth-backed session protection, input sanitization layers, and an immutable action log for regulatory compliance.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Framework:** Next.js 14+ (App Router, Server Actions, Serverless API Routes)
+* **Frontend:** TypeScript, Tailwind CSS, Lucide Icons
+* **AI Engine:** Google Gemini Pro API
+* **Auth & Security:** NextAuth.js, Custom Audit Logging, Data Sanitization
+* **Database:** SQL / Prisma / Custom Adapter (see `lib/db.js`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Project Structure
+
+```text
+fraudwatch360/
+├── app/
+│   ├── api/
+│   │   ├── cases/             # Case CRUD, management, and SAR generation
+│   │   ├── messages/          # Tokenized secure communication
+│   │   └── reports/           # Public incident report submission
+│   ├── dashboard/             # Investigator workspace (cases, evidence, triage)
+│   ├── report/                # Public fraud reporting portal
+│   └── check-status/          # Citizen ticket lookup & live messaging
+├── lib/
+│   ├── gemini.js              # AI prompt orchestration & SAR automation
+│   ├── security.js            # Payload hashing, auth validation & sanitization
+│   ├── audit.js               # Immutable event logging
+│   └── db.js                  # Database connection pool & client
+└── seed.js                    # Database seeder for demo environments
