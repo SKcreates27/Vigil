@@ -1,4 +1,4 @@
-# 🛡️ FraudWatch360
+# 🛡️ Vigil
 
 > An intelligent, end-to-end fraud intake, investigation, and regulatory reporting platform built for high-stakes fraud response teams.
 
@@ -11,7 +11,7 @@ Most fraud reporting channels suffer from two big bottlenecks:
 1. **Victims are left in the dark:** Friction-heavy intake forms, zero status visibility, and broken communication channels.
 2. **Investigators are overwhelmed:** Sifting through unstructured reports, manually assessing threat levels, and spending hours writing compliance-heavy Suspicious Activity Reports (SAR).
 
-**FraudWatch360** bridges this gap. It provides a secure, tokenized public portal for seamless anonymous fraud reporting, paired with an investigator command center powered by Google Gemini to automate threat scoring, evidence handling, and SAR drafting.
+**Vigil** bridges this gap. It provides a secure, tokenized public portal for seamless anonymous fraud reporting, paired with an investigator command center powered by Google Gemini to automate threat scoring, evidence handling, and SAR drafting.
 
 ---
 
@@ -38,7 +38,7 @@ Most fraud reporting channels suffer from two big bottlenecks:
 ## Project Structure
 
 ```text
-fraudwatch360/
+Vigil/
 ├── app/
 │   ├── api/
 │   │   ├── cases/             # Case CRUD, management, and SAR generation
