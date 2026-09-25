@@ -79,12 +79,24 @@ export default function ReportPage() {
             {/* Access Key */}
             <div className="card">
               <div className="label-caps" style={{ marginBottom: '12px' }}>Secure Access Key</div>
-              <div style={{ background: '#f8f9ff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '14px 16px', fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, letterSpacing: '0.1em', color: '#0b1c30', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>{result.token.substring(0, 19).toUpperCase()}</span>
-                <button onClick={() => navigator.clipboard.writeText(result.token)} className="btn-ghost" style={{ padding: '4px 8px' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>content_copy</span>
-                </button>
-              </div>
+              <div style={{ background: '#f8f9ff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '14px 16px', fontFamily: 'monospace', fontSize: '13px', fontWeight: 700, color: '#0b1c30', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', wordBreak: 'break-all' }}>
+  <span style={{ flex: 1, fontSize: '12px', letterSpacing: '0.05em' }}>{result.token}</span>
+  <button onClick={() => {
+    navigator.clipboard.writeText(result.token).then(() => {
+      alert('Token copied to clipboard');
+    }).catch(() => {
+      const el = document.createElement('textarea');
+      el.value = result.token;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      alert('Token copied');
+    });
+  }} style={{ background: '#131b2e', border: 'none', borderRadius: '2px', padding: '6px 12px', color: 'white', fontSize: '11px', fontWeight: 700, cursor: 'pointer', flexShrink: 0, letterSpacing: '0.04em' }}>
+    COPY
+  </button>
+</div>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', padding: '10px', background: '#fff3cd', borderRadius: '2px', marginBottom: '10px' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#7a5500', marginTop: '1px', flexShrink: 0 }}>warning</span>
                 <p style={{ fontSize: '12px', color: '#7a5500', lineHeight: 1.5 }}>Record this key immediately. We do not store unencrypted copies. If lost, you will permanently lose access to this investigation.</p>
@@ -116,7 +128,7 @@ export default function ReportPage() {
 
               {result.ai_summary && (
                 <div style={{ background: '#e5eeff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '12px', marginBottom: '16px' }}>
-                  <div className="label-caps" style={{ marginBottom: '6px' }}>Gemini AI Analysis</div>
+                  <div className="label-caps" style={{ marginBottom: '6px' }}>AI Analysis</div>
                   <p style={{ fontSize: '12px', color: '#45464d', lineHeight: 1.6 }}>{result.ai_summary}</p>
                 </div>
               )}
