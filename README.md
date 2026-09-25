@@ -29,7 +29,7 @@ Most fraud reporting channels suffer from two big bottlenecks:
 
 * **Framework:** Next.js 14+ (App Router, Server Actions, Serverless API Routes)
 * **Frontend:** TypeScript, Tailwind CSS, Lucide Icons
-* **AI Engine:** Google Groq Pro API
+* **AI Engine:** Groq Pro API
 * **Auth & Security:** NextAuth.js, Custom Audit Logging, Data Sanitization
 * **Database:** SQL / Prisma / Custom Adapter (see `lib/db.js`)
 
