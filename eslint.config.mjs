@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone Node CLI scripts (run directly with `node`, not bundled by
+    // Next.js) — plain CommonJS, so the app's TypeScript/ESM-import rules
+    // don't apply to them.
+    "seed.js",
+    "createadmin.js",
   ]),
 ]);
 

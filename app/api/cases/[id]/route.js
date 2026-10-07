@@ -3,11 +3,11 @@ import { query } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { logAction } from '@/lib/audit';
-import { headers } from 'next/headers';
+import { sanitizeInput } from '@/lib/security';
+
+const VALID_STATUSES = ['new', 'under_investigation', 'pending_review', 'resolved'];
 
 export async function GET(req, { params }) {
-  // Pass headers explicitly — stabilizes getServerSession on Vercel preview routes
-  const headersList = await headers();
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -15,14 +15,7 @@ export async function GET(req, { params }) {
   }
 
   try {
-    const resolvedParams = await params;
-    let id = resolvedParams?.id;
-
-    // Fallback: Check search/query string parameter interfaces (handles nxtPid routing mechanics)
-    if (!id) {
-      const { searchParams } = new URL(req.url);
-      id = searchParams.get('id') || searchParams.get('nxtPid');
-    }
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json({ error: 'Missing Case ID' }, { status: 400 });
@@ -54,7 +47,9 @@ export async function GET(req, { params }) {
       }
     }
 
-    // 2. Defensive query executions to ensure a structural mismatch never crashes the session context
+    // Evidence is kept non-fatal: this prototype doesn't yet create rows in
+    // this table (see README "Known limitations"), so an empty result here
+    // is expected, not an error to hide.
     let evidenceRows = [];
     try {
       const evidenceResult = await query(
@@ -63,34 +58,20 @@ export async function GET(req, { params }) {
       );
       evidenceRows = evidenceResult.rows;
     } catch (err) {
-      console.warn('Non-fatal pipeline mismatch: evidence query skipped.', err.message);
+      console.warn('Evidence query failed (table may not exist yet):', err.message);
     }
 
-    let auditRows = [];
-    try {
-      const auditResult = await query('SELECT * FROM audit_logs WHERE target_id = $1 ORDER BY created_at DESC LIMIT 20', [currentCase.report_id]);
-      auditRows = auditResult.rows;
-    } catch (err) {
-      try {
-        const auditResult = await query('SELECT * FROM audit_log WHERE target_id = $1 ORDER BY created_at DESC LIMIT 20', [currentCase.report_id]);
-        auditRows = auditResult.rows;
-      } catch (innerErr) {
-        console.warn('Non-fatal pipeline mismatch: audit query skipped.', innerErr.message);
-      }
-    }
+    const auditResult = await query(
+      'SELECT * FROM audit_log WHERE target_id = $1 ORDER BY created_at DESC LIMIT 20',
+      [currentCase.report_id]
+    );
+    const auditRows = auditResult.rows;
 
-    let messageRows = [];
-    try {
-      const messagesResult = await query('SELECT * FROM messages WHERE report_id = $1 ORDER BY created_at ASC', [currentCase.report_id]);
-      messageRows = messagesResult.rows;
-    } catch (err) {
-      try {
-        const messagesResult = await query('SELECT * FROM messages WHERE report_token = $1 ORDER BY created_at ASC', [currentCase.anonymous_token]);
-        messageRows = messagesResult.rows;
-      } catch (innerErr) {
-        console.warn('Non-fatal pipeline mismatch: chat query skipped.', innerErr.message);
-      }
-    }
+    const messagesResult = await query(
+      'SELECT * FROM messages WHERE report_id = $1 ORDER BY created_at ASC',
+      [currentCase.report_id]
+    );
+    const messageRows = messagesResult.rows;
 
     // 3. Return cleanly formatted response structures back to the UI interface
     return NextResponse.json({
@@ -116,6 +97,10 @@ export async function PATCH(req, { params }) {
     const body = await req.json();
     const { status, notes, is_legal_hold } = body;
 
+    if (status && !VALID_STATUSES.includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
     const caseResult = await query('SELECT * FROM cases WHERE id = $1', [id]);
     if (caseResult.rows.length === 0) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -123,8 +108,8 @@ export async function PATCH(req, { params }) {
 
     const c = caseResult.rows[0];
     const newStatus = status ?? c.status;
-    const newNotes = notes ?? c.notes;
-    const newLegalHold = is_legal_hold ?? c.is_legal_hold;
+    const newNotes = typeof notes === 'string' ? sanitizeInput(notes, 5000) : c.notes;
+    const newLegalHold = typeof is_legal_hold === 'boolean' ? is_legal_hold : c.is_legal_hold;
 
     await query(
       'UPDATE cases SET status=$1, notes=$2, is_legal_hold=$3 WHERE id=$4',

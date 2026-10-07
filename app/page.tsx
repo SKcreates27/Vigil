@@ -40,7 +40,7 @@ export default function Home() {
         </h1>
 
         <p style={{ fontSize: '16px', color: '#45464d', maxWidth: '560px', lineHeight: 1.7, marginBottom: '40px' }}>
-          A secure, anonymous whistleblower platform for internal fraud reporting. AI-powered triage, forensic investigation workflow, tamper-proof evidence chain, and regulatory SAR generation.
+          An anonymous whistleblower platform for internal fraud reporting. AI-powered triage, an investigation workflow, an append-only audit trail, and draft SAR generation for investigator review.
         </p>
 
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '72px' }}>
@@ -52,20 +52,20 @@ export default function Home() {
         <div style={{ display: 'flex', gap: '0', border: '1px solid #c6c6cd', borderRadius: '2px', overflow: 'hidden', marginBottom: '56px', background: '#ffffff' }}>
           {[
             {
-              svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-              label: 'TOR-COMPATIBLE', desc: 'Anonymous routing'
+              svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>,
+              label: 'NO IP LOGGING', desc: 'This application does not store IP addresses'
             },
             {
-              svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>,
-              label: 'NO IP LOGGING', desc: 'Zero identity trace'
+              svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>,
+              label: 'NO ACCOUNT REQUIRED', desc: 'No sign-up or identity needed to report'
             },
             {
               svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-              label: 'AES-256 ENCRYPTED', desc: 'End-to-end encrypted'
+              label: 'HTTPS ONLY', desc: 'All traffic encrypted in transit'
             },
             {
               svg: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#45464d" strokeWidth="1.5" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-              label: 'SEBI COMPLIANT', desc: 'Regulatory ready'
+              label: 'SEBI / PMLA AWARE', desc: 'Flags thresholds for investigator review'
             },
           ].map((b, i) => (
             <div key={b.label} style={{ flex: 1, padding: '20px 16px', borderLeft: i > 0 ? '1px solid #c6c6cd' : 'none', textAlign: 'center' }}>
@@ -97,7 +97,7 @@ export default function Home() {
             {
               svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545f73" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
               title: 'AI-Powered Triage',
-              desc: 'Gemini AI classifies fraud type, severity, urgency, and suggests investigation steps automatically on submission.'
+              desc: 'A Groq-hosted LLM classifies fraud type, severity, and urgency, and suggests investigation steps automatically on submission.'
             },
             {
               svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545f73" strokeWidth="1.5" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
@@ -106,13 +106,13 @@ export default function Home() {
             },
             {
               svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545f73" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="#545f73"/></svg>,
-              title: 'Tamper-Proof Evidence Chain',
-              desc: 'SHA-256 fingerprinting, append-only audit log, and legal hold functionality for court-admissible evidence handling.'
+              title: 'Append-Only Audit Trail',
+              desc: 'Every case action is written to an append-oriented audit log, with legal hold functionality to flag a case for preservation.'
             },
             {
               svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#545f73" strokeWidth="1.5" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
-              title: 'SAR Auto-Generation',
-              desc: 'One-click Suspicious Activity Report generation pre-populated by AI for SEBI, PMLA, and FinCEN compliance.'
+              title: 'SAR Draft Generation',
+              desc: 'One-click draft Suspicious Activity Report, pre-populated by AI and referencing SEBI (LODR) and PMLA, for investigator review before filing.'
             },
           ].map((f) => (
             <div key={f.title} style={{ background: '#ffffff', padding: '24px' }}>

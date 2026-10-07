@@ -4,7 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import Link from 'next/link';
 
 interface Case {
-  id: number; report_id: number; fraud_type: string; severity: string;
+  id: number; case_id: number | null; fraud_type: string; severity: string;
   urgency: string; department: string; amount: number; status: string;
   regulatory_flag: boolean; report_date: string; description: string;
 }
@@ -20,8 +20,6 @@ function TriageContent() {
   const [severityFilter, setSeverityFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => { fetchCases(); }, [severityFilter]);
-
   async function fetchCases() {
     setLoading(true);
     const params = new URLSearchParams();
@@ -31,6 +29,12 @@ function TriageContent() {
     setCases(Array.isArray(data) ? data : []);
     setLoading(false);
   }
+
+  // Same fetch-on-mount pattern used throughout the dashboard pages
+  // (active/evidence/reports/cases all do this); fetchCases is a stable
+  // function declaration, not a changing dependency.
+  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  useEffect(() => { fetchCases(); }, [severityFilter]);
 
   const filtered = cases.filter(c => {
   if (activeTab === 'new') return c.status === 'new';
@@ -167,7 +171,7 @@ function TriageContent() {
                   <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{c.amount ? `₹${Number(c.amount).toLocaleString('en-IN')}` : '—'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <Link href={`/dashboard/cases/${c.id}`}>
+                      <Link href={c.case_id ? `/dashboard/cases/${c.case_id}` : '#'}>
                         <span style={{ fontSize: '13px', fontWeight: 600, color: '#0b1c30', cursor: 'pointer', textDecoration: 'underline' }}>Investigate</span>
                       </Link>
                       <span style={{ fontSize: '13px', color: '#76777d', cursor: 'pointer' }}>Dismiss</span>

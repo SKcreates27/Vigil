@@ -81,7 +81,7 @@ export default function LoginPage() {
 
       <div className="status-bar">
         <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · NODE: FW360-AUTH-01</span>
-        <span>ENCRYPTION: AES-256-GCM · SESSION: ZERO-TRUST</span>
+        <span>AUTHENTICATED SESSION REQUIRED</span>
       </div>
     </div>
   );

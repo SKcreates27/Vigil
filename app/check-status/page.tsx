@@ -150,7 +150,7 @@ export default function CheckStatusPage() {
                 <span style={{ fontSize: '11px', color: '#76777d', fontFamily: 'monospace' }}>CASE REF: #{data.report.id}</span>
               </div>
               <p style={{ fontSize: '12px', color: '#76777d', marginBottom: '20px' }}>
-                Messages are end-to-end anonymous. The investigator cannot see your identity.
+                Messages are anonymous — the investigator cannot see your identity.
               </p>
 
               {data.messages.length === 0 ? (
@@ -201,7 +201,7 @@ export default function CheckStatusPage() {
                   </button>
                 </form>
                 <div style={{ fontSize: '11px', color: '#76777d', textAlign: 'center', marginTop: '8px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                  Messages are automatically purged after case resolution
+                  Messages are retained until the case is resolved and reviewed
                 </div>
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function CheckStatusPage() {
 
       <div className="status-bar">
         <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · NODE: FW360-WB-01</span>
-        <span>ENCRYPTION: AES-256 · SESSION: ANONYMOUS</span>
+        <span>SESSION: ANONYMOUS</span>
       </div>
     </div>
   );

@@ -1,9 +1,16 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
-const pool = new Pool({
-  connectionString: 'postgresql://postgres:sk12rk24@localhost:5432/fraudwatch_db',
-});
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.error('DATABASE_URL is not set. Point it at your local or Neon database before seeding.');
+  process.exit(1);
+}
+
+const seedEmail = process.env.SEED_ADMIN_EMAIL || 'admin@vigil.local';
+const seedPassword = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe123!';
+
+const pool = new Pool({ connectionString });
 
 async function seed() {
   const client = await pool.connect();
@@ -12,13 +19,13 @@ async function seed() {
     console.log('Seeding database...');
 
     // Create investigator account
-    const passwordHash = await bcrypt.hash('admin123', 10);
+    const passwordHash = await bcrypt.hash(seedPassword, 10);
     await client.query(`
       INSERT INTO investigators (email, password_hash, role)
-      VALUES ('admin@fraudwatch.com', $1, 'admin')
+      VALUES ($1, $2, 'admin')
       ON CONFLICT (email) DO NOTHING
-    `, [passwordHash]);
-    console.log('✓ Investigator created: admin@fraudwatch.com / admin123');
+    `, [seedEmail, passwordHash]);
+    console.log(`✓ Investigator created: ${seedEmail} / ${seedPassword}`);
 
     // Seed demo reports + cases
     const demoReports = [
@@ -124,8 +131,8 @@ async function seed() {
 
     console.log('✓ Demo cases seeded');
     console.log('\nDone! You can now login at http://localhost:3000/login');
-    console.log('Email: admin@fraudwatch.com');
-    console.log('Password: admin123');
+    console.log(`Email: ${seedEmail}`);
+    console.log(`Password: ${seedPassword}`);
 
   } catch (err) {
     console.error('Seed error:', err);

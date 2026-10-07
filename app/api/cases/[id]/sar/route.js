@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { generateSARContent } from '@/lib/gemini';
+import { generateSARContent } from '@/lib/groq';
 
 export async function GET(req, { params }) {
   const session = await getServerSession(authOptions);
@@ -39,7 +39,9 @@ export async function GET(req, { params }) {
     };
   }
 
-  // Build PDF as plain text (no external PDF library needed)
+  // Rendered as a plain-text document, not a PDF — there's no PDF generation
+  // in this prototype despite pdfkit being listed as a dependency elsewhere
+  // in earlier drafts of this project; see README "Known limitations".
   const pdfContent = buildSARText(sarData, caseData, id);
 
   return new NextResponse(pdfContent, {
@@ -95,7 +97,7 @@ ${line}
 ${sar.evidence_summary}
 
 ${line}
-SECTION 5 — AI TRIAGE SUMMARY (Gemini)
+SECTION 5 — AI TRIAGE SUMMARY
 ${line}
 
 Fraud Type  : ${caseData.fraud_type?.replace(/_/g, ' ')}

@@ -70,9 +70,9 @@ export default function ReportPage() {
           <div style={{ width: '32px', height: '32px', background: '#131b2e', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'white' }}>check</span>
           </div>
-          <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '10px' }}>Report Successfully Encrypted</h2>
+          <h2 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '10px' }}>Report Submitted Anonymously</h2>
           <p style={{ color: '#45464d', fontSize: '14px', textAlign: 'center', maxWidth: '500px', marginBottom: '40px', lineHeight: 1.6 }}>
-            Your submission has been received by the Internal Investigation Unit. Your identity is protected by end-to-end zero-knowledge encryption.
+            Your submission has been received by the Internal Investigation Unit. No name, IP address, or session identifier was collected with it.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', width: '100%', maxWidth: '760px' }}>
@@ -99,7 +99,7 @@ export default function ReportPage() {
 </div>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', padding: '10px', background: '#fff3cd', borderRadius: '2px', marginBottom: '10px' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#7a5500', marginTop: '1px', flexShrink: 0 }}>warning</span>
-                <p style={{ fontSize: '12px', color: '#7a5500', lineHeight: 1.5 }}>Record this key immediately. We do not store unencrypted copies. If lost, you will permanently lose access to this investigation.</p>
+                <p style={{ fontSize: '12px', color: '#7a5500', lineHeight: 1.5 }}>Record this key immediately — it is shown only once. If lost, there is no recovery mechanism and you will permanently lose access to this investigation.</p>
               </div>
               <div style={{ fontSize: '11px', color: '#76777d', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', borderTop: '1px solid #c6c6cd', paddingTop: '10px' }}>Security Protocol</div>
               <p style={{ fontSize: '12px', color: '#45464d', lineHeight: 1.5, marginTop: '4px' }}>Do not share this key. Avoid accessing this portal on corporate networks or managed devices.</p>
@@ -142,9 +142,9 @@ export default function ReportPage() {
           {/* Bottom metadata */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: '#c6c6cd', border: '1px solid #c6c6cd', borderRadius: '2px', overflow: 'hidden', marginTop: '20px', width: '100%', maxWidth: '760px' }}>
             {[
-              { label: 'Connection Method', value: 'AES-256 / SHA-384 Tunnel' },
-              { label: 'IP Anonymization', value: 'Proxy Routing Active' },
-              { label: 'Data Retention', value: <span style={{ color: '#ba1a1a', fontWeight: 600 }}>Volatile — Session Scoped</span> },
+              { label: 'Connection', value: 'HTTPS (TLS) in transit' },
+              { label: 'IP Address', value: 'Not stored by this application' },
+              { label: 'Data Retention', value: <span style={{ color: '#ba1a1a', fontWeight: 600 }}>Retained until case is resolved</span> },
             ].map(m => (
               <div key={m.label} style={{ background: '#ffffff', padding: '14px 16px' }}>
                 <div className="label-caps" style={{ marginBottom: '4px' }}>{m.label}</div>
@@ -156,7 +156,7 @@ export default function ReportPage() {
 
         <div className="status-bar">
           <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · ACTIVE NODE: FW360-WB-01</span>
-          <span>LAST SYNC: {new Date().toISOString()} UTC · ENCRYPTION: AES-256</span>
+          <span>LAST SYNC: {new Date().toISOString()} UTC</span>
         </div>
       </div>
     );
@@ -183,16 +183,16 @@ export default function ReportPage() {
       {/* Trust badges */}
       <div style={{ background: '#ffffff', borderBottom: '1px solid #c6c6cd', padding: '12px 40px', display: 'flex', gap: '40px', alignItems: 'center' }}>
         {[
-          { icon: 'hub', label: 'TOR-COMPATIBLE' },
           { icon: 'visibility_off', label: 'NO IP LOGGING' },
-          { icon: 'lock', label: 'ENCRYPTED END-TO-END' },
+          { icon: 'badge', label: 'NO ACCOUNT REQUIRED' },
+          { icon: 'lock', label: 'HTTPS ONLY' },
         ].map(b => (
           <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#45464d' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#76777d' }}>{b.icon}</span>
             <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{b.label}</span>
           </div>
         ))}
-        <div style={{ marginLeft: 'auto', background: '#e5eeff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '4px 12px', fontSize: '11px', fontWeight: 700, color: '#131b2e', letterSpacing: '0.06em' }}>ENCRYPTED END-TO-END</div>
+        <div style={{ marginLeft: 'auto', background: '#e5eeff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '4px 12px', fontSize: '11px', fontWeight: 700, color: '#131b2e', letterSpacing: '0.06em' }}>NO IDENTITY DATA COLLECTED</div>
       </div>
 
       {/* Progress bar */}
@@ -378,14 +378,14 @@ export default function ReportPage() {
         <div style={{ marginTop: '24px', padding: '16px', background: '#ffffff', border: '1px solid #c6c6cd', borderRadius: '2px', display: 'flex', gap: '12px' }}>
           <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#76777d', flexShrink: 0, marginTop: '1px' }}>info</span>
           <p style={{ fontSize: '12px', color: '#45464d', lineHeight: 1.6 }}>
-            Upon submission, you will receive a 16-digit mnemonic key. This is the <strong>only</strong> way to track progress or receive messages from the Internal Investigation Unit. We do not store email addresses or personal identifiers.
+            Upon submission, you will receive a secure access key (a UUID). This is the <strong>only</strong> way to track progress or receive messages from the Internal Investigation Unit. We do not store email addresses or personal identifiers.
           </p>
         </div>
       </div>
 
       <div className="status-bar">
         <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · NODE: FW360-WB-01</span>
-        <span>LAST SYNC: {new Date().toUTCString()} · ENCRYPTION: AES-256</span>
+        <span>LAST SYNC: {new Date().toUTCString()}</span>
       </div>
     </div>
   );

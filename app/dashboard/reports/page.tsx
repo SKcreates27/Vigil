@@ -39,12 +39,15 @@ function ReportsContent() {
     low: cases.filter(c => c.severity === 'low').length,
   };
 
+  // These are indicators this prototype tracks and surfaces for an
+  // investigator's own judgment — not an independently verified legal
+  // compliance attestation. A student project can flag a threshold; it
+  // can't certify an organization's regulatory compliance.
   const compliance = [
-    { label: 'SEBI LODR Vigil Mechanism', status: 'compliant', date: 'Active' },
-    { label: 'PMLA Reporting Obligation', status: regulatory > 0 ? 'action' : 'compliant', date: regulatory > 0 ? 'URGENT' : 'Current' },
-    { label: 'Companies Act 2013 — Sec 177', status: 'compliant', date: 'Active' },
-    { label: 'Audit Trail Integrity', status: 'compliant', date: 'Verified' },
-    { label: 'Data Encryption — AES-256', status: 'compliant', date: 'Active' },
+    { label: 'SEBI LODR Vigil Mechanism — report channel', status: 'compliant', date: 'Available' },
+    { label: 'PMLA Reporting Threshold — cases flagged', status: regulatory > 0 ? 'action' : 'compliant', date: regulatory > 0 ? `${regulatory} FLAGGED` : 'None pending' },
+    { label: 'Companies Act 2013 — Sec 177 channel', status: 'compliant', date: 'Available' },
+    { label: 'Audit Trail Logging', status: 'compliant', date: 'Append-oriented' },
     { label: 'Anonymous Channel Availability', status: 'compliant', date: '24/7' },
   ];
 
@@ -70,13 +73,13 @@ function ReportsContent() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
+            <button className="btn-secondary" onClick={() => window.print()} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               Print Report
             </button>
-            <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
+            <button className="btn-primary" disabled title="Per-case SAR export is available from each case's detail page" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', opacity: 0.5, cursor: 'not-allowed' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Export PDF
+              Export (per case)
             </button>
           </div>
         </div>
@@ -87,10 +90,10 @@ function ReportsContent() {
         {/* KPI row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: '#c6c6cd', border: '1px solid #c6c6cd', borderRadius: '2px', overflow: 'hidden' }}>
           {[
-            { label: 'Total Escalations', value: total, sub: `+${Math.max(0, total - 5)} vs LY`, color: '#0b1c30', subColor: '#1a6934' },
-            { label: 'SAR Filing Accuracy', value: `${sarAccuracy}%`, sub: 'Stable', color: '#0b1c30', subColor: '#76777d' },
+            { label: 'Total Escalations', value: total, sub: `${active} active`, color: '#0b1c30', subColor: '#76777d' },
+            { label: 'Case Resolution Rate', value: `${sarAccuracy}%`, sub: `${resolved} of ${total} resolved`, color: '#0b1c30', subColor: '#76777d' },
             { label: 'High Value Breaches', value: critical, sub: `₹${(totalAmount / 1e6).toFixed(1)}M Total`, color: '#ba1a1a', subColor: '#ba1a1a' },
-            { label: 'Time to Compliance', value: '1.4d', sub: '-0.2d Improvement', color: '#0b1c30', subColor: '#1a6934' },
+            { label: 'Time to Resolution', value: '—', sub: 'Not yet tracked', color: '#0b1c30', subColor: '#76777d' },
           ].map(s => (
             <div key={s.label} style={{ background: '#ffffff', padding: '20px 24px' }}>
               <div className="label-caps" style={{ marginBottom: '8px' }}>{s.label}</div>
@@ -149,7 +152,7 @@ function ReportsContent() {
 
           {/* Compliance status */}
           <div className="card" style={{ background: '#131b2e', border: '1px solid #213145' }}>
-            <div style={{ fontWeight: 700, fontSize: '15px', color: '#ffffff', marginBottom: '16px' }}>Compliance Status</div>
+            <div style={{ fontWeight: 700, fontSize: '15px', color: '#ffffff', marginBottom: '16px' }}>Regulatory Risk Indicators</div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
               {compliance.map(c => (
@@ -250,20 +253,26 @@ function ReportsContent() {
 
             {/* SAR preview box */}
             <div style={{ background: '#f8f9ff', border: '1px solid #c6c6cd', borderRadius: '2px', padding: '14px', marginBottom: '14px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: '#0b1c30', marginBottom: '4px' }}>FINANCIAL CRIMES ENFORCEMENT NETWORK</div>
-              <div style={{ fontSize: '10px', color: '#76777d', marginBottom: '6px' }}>SUSPICIOUS ACTIVITY REPORT (Form FinCEN 111)</div>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: '#0b1c30', marginBottom: '4px' }}>SUSPICIOUS ACTIVITY REPORT</div>
+              <div style={{ fontSize: '10px', color: '#76777d', marginBottom: '6px' }}>Drafted per case, referencing SEBI (LODR) Regulations 2015 and PMLA 2002</div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#76777d' }}>
-                <span>BSA ID: {Math.floor(Math.random() * 900000000) + 100000000}-X</span>
-                <span>Draft Date: {new Date().toISOString().split('T')[0]}</span>
+                <span>Regulatory-flagged cases: {regulatory}</span>
+                <span>As of: {new Date().toISOString().split('T')[0]}</span>
               </div>
-              <hr style={{ border: 'none', borderTop: '1px solid #c6c6cd', margin: '8px 0' }} />
-              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', color: '#0b1c30' }}>PART I — SUBJECT INFORMATION</div>
             </div>
 
-            <button className="btn-primary" style={{ width: '100%', padding: '10px' }}
-              onClick={() => { if (total > 0) window.location.href = `/dashboard/cases/1`; }}>
-              GENERATE CONSOLIDATED SAR →
+            <button className="btn-primary"
+              disabled={regulatory === 0}
+              style={{ width: '100%', padding: '10px', opacity: regulatory === 0 ? 0.5 : 1 }}
+              onClick={() => {
+                const flagged = cases.find(c => c.regulatory_flag);
+                if (flagged) window.location.href = `/dashboard/cases/${flagged.id}`;
+              }}>
+              OPEN NEXT REGULATORY-FLAGGED CASE →
             </button>
+            <div style={{ fontSize: '11px', color: '#76777d', marginTop: '6px', textAlign: 'center' }}>
+              SAR documents are generated per case on the case detail page.
+            </div>
           </div>
         </div>
 

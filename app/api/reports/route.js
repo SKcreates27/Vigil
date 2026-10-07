@@ -1,14 +1,23 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { logAction } from '@/lib/audit';
-import { triageReport } from '@/lib/gemini';
+import { triageReport } from '@/lib/groq';
 import { sanitizeInput, sanitizeAmount } from '@/lib/security';
 import { randomUUID } from 'crypto';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 // 1. POST HANDLER: Submits a new whistleblower report
 export async function POST(req) {
   try {
-    // Never log or store the IP — this is by design
+    // Never log or store the IP — this is by design. We do use it transiently
+    // for in-memory rate limiting below, but it is never persisted anywhere.
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    if (!checkRateLimit(`report-submit:${ip}`, 5)) {
+      return NextResponse.json({ error: 'Too many submissions. Please try again later.' }, { status: 429 });
+    }
+
     const body = await req.json();
 
     // Sanitize all inputs before touching the DB
@@ -46,7 +55,7 @@ export async function POST(req) {
       severity: 'medium',
       urgency: 'routine',
       department_likely: department || 'unknown',
-      ai_summary: 'Automated extraction compilation processing failed.',
+      ai_summary: 'AI triage was unavailable for this report — please review manually.',
       suggested_steps: [],
     };
 
@@ -61,7 +70,7 @@ export async function POST(req) {
         };
       }
     } catch (aiErr) {
-      console.error('Critical: Gemini fallback logic engaged. AI triage execution error:', aiErr.message);
+      console.error('AI triage failed, falling back to default classification:', aiErr.message);
     }
 
     // Severity escalation rules
@@ -105,15 +114,29 @@ export async function POST(req) {
   }
 }
 
-// 2. GET HANDLER: Resolves the 405 error and loads cases into the investigator dashboard
+// 2. GET HANDLER: Loads the triage queue for the investigator dashboard.
+// Requires an authenticated investigator session — this is the list of every
+// whistleblower report in the system, so it must never be reachable
+// anonymously. The anonymous_token column is intentionally left out of the
+// SELECT: investigators work off case/report IDs, not tokens, and the token
+// is the reporter's sole credential — it should never leave the server in
+// bulk like this.
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const result = await query(
-      `SELECT id, anonymous_token, description, department, fraud_type, amount, status, severity, urgency, regulatory_flag, evidence, created_at AS report_date 
-       FROM reports 
-       ORDER BY created_at DESC`
+      `SELECT r.id, c.id AS case_id, r.description, r.department, r.fraud_type, r.amount,
+              r.status, r.severity, r.urgency, r.regulatory_flag, r.evidence,
+              r.created_at AS report_date
+       FROM reports r
+       LEFT JOIN cases c ON c.report_id = r.id
+       ORDER BY r.created_at DESC`
     );
-    
+
     return NextResponse.json(result.rows || []);
   } catch (err) {
     console.error('Failed to fetch triage queue reports:', err);

@@ -168,7 +168,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* Status bar */}
       <div className="status-bar" style={{ left: '240px' }}>
         <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · ACTIVE NODE: FW360-TR-01</span>
-        <span>LAST SYNC: {new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC · ENCRYPTION: AES-256-GCM</span>
+        <span>LAST SYNC: {new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC</span>
       </div>
     </div>
   );
