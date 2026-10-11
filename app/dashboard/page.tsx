@@ -158,7 +158,7 @@ function TriageContent() {
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {c.regulatory_flag && <div style={{ width: '6px', height: '6px', background: '#ba1a1a', borderRadius: '50%', flexShrink: 0 }} />}
-                      <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>FW-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</span>
+                      <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>VG-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</span>
                     </div>
                   </td>
                   <td><span className={`badge badge-${c.severity === 'high' ? 'high-severity' : c.severity}`}>{SEVERITY_LABEL[c.severity] || c.severity?.toUpperCase()}</span></td>

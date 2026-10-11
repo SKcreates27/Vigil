@@ -67,7 +67,7 @@ export default function CheckStatusPage() {
           <Link href="/report" style={{ fontSize: '13px', color: '#76777d', fontWeight: 500 }}>Submit Report</Link>
           <Link href="/check-status" style={{ fontSize: '13px', color: '#131b2e', fontWeight: 700, borderBottom: '2px solid #131b2e', paddingBottom: '2px' }}>Status Check</Link>
         </div>
-        <div style={{ background: '#ffdad6', border: '1px solid #ba1a1a', borderRadius: '2px', padding: '4px 10px', fontSize: '11px', fontWeight: 700, color: '#ba1a1a', letterSpacing: '0.06em' }}>ZERO-TRUST SESSION</div>
+        <div style={{ background: '#ffdad6', border: '1px solid #ba1a1a', borderRadius: '2px', padding: '4px 10px', fontSize: '11px', fontWeight: 700, color: '#ba1a1a', letterSpacing: '0.06em' }}>ANONYMOUS SESSION</div>
       </header>
 
       <div style={{ maxWidth: '700px', margin: '40px auto', padding: '0 24px', width: '100%' }}>
@@ -210,7 +210,7 @@ export default function CheckStatusPage() {
       </div>
 
       <div className="status-bar">
-        <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · NODE: FW360-WB-01</span>
+        <span>VIGIL · PROTOTYPE BUILD</span>
         <span>SESSION: ANONYMOUS</span>
       </div>
     </div>

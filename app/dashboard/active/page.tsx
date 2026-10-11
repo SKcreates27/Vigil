@@ -52,7 +52,7 @@ function ActiveCasesContent() {
                 <tr><td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: '#76777d' }}>No active investigations</td></tr>
               ) : cases.map(c => (
                 <tr key={c.id} onClick={() => window.location.href = `/dashboard/cases/${c.id}`} style={{ cursor: 'pointer' }}>
-                  <td style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>FW-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</td>
+                  <td style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>VG-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</td>
                   <td style={{ maxWidth: '260px' }}>
                     <div style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.description?.substring(0, 55)}...</div>
                   </td>

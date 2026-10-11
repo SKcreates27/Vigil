@@ -80,7 +80,7 @@ export default function LoginPage() {
       </div>
 
       <div className="status-bar">
-        <span>SYSTEM STATUS: <span className="status-ok">OPTIMAL</span> · NODE: FW360-AUTH-01</span>
+        <span>VIGIL · PROTOTYPE BUILD</span>
         <span>AUTHENTICATED SESSION REQUIRED</span>
       </div>
     </div>

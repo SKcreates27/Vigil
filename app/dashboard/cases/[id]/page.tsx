@@ -23,8 +23,6 @@ const LockIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="non
 const DocIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
 const BoltIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
 const CheckIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>;
-const ChainIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>;
-const UploadIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>;
 const FileIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#76777d" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
 const SendIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
 const DotIcon = ({ color }: { color: string }) => <div style={{ width: '8px', height: '8px', background: color, borderRadius: '50%', flexShrink: 0 }} />;
@@ -90,9 +88,10 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
   if (loading) return <div style={{ padding: '32px', color: '#76777d', fontSize: '13px' }}>Loading case...</div>;
   if (!caseData) return <div style={{ padding: '32px' }}><div style={{ color: '#ba1a1a' }}>Case not found</div></div>;
 
+  // Gauge position is just the severity tier mapped to a bar length — it is not a computed probability.
   const riskScore = caseData.severity === 'critical' ? 94 : caseData.severity === 'high' ? 72 : caseData.severity === 'medium' ? 45 : 20;
   const riskColor = riskScore > 80 ? '#ba1a1a' : riskScore > 60 ? '#7a3900' : '#1a6934';
-  const caseRef = `FW-${new Date(caseData.report_date).getFullYear()}-${String(caseData.id).padStart(4, '0')}`;
+  const caseRef = `VG-${new Date(caseData.report_date).getFullYear()}-${String(caseData.id).padStart(4, '0')}`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 92px)' }}>
@@ -177,10 +176,9 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               </div>
 
               <div style={{ marginBottom: '10px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', color: '#8899bb', textTransform: 'uppercase', marginBottom: '6px' }}>Risk Score</div>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', color: '#8899bb', textTransform: 'uppercase', marginBottom: '6px' }}>AI-Assigned Severity</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
-                  <span style={{ fontSize: '32px', fontWeight: 700, color: riskColor, letterSpacing: '-0.02em' }}>{riskScore}</span>
-                  <span style={{ fontSize: '13px', color: '#8899bb' }}>/100</span>
+                  <span style={{ fontSize: '26px', fontWeight: 700, color: riskColor, letterSpacing: '-0.02em' }}>{caseData.severity?.toUpperCase()}</span>
                 </div>
                 <div style={{ height: '3px', background: '#213145', borderRadius: '1px', overflow: 'hidden' }}>
                   <div style={{ width: `${riskScore}%`, height: '100%', background: riskColor }} />
@@ -299,23 +297,11 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
         <div style={{ overflow: 'auto', background: '#ffffff' }}>
           <div style={{ padding: '16px 16px', borderBottom: '1px solid #c6c6cd', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ fontWeight: 700, fontSize: '15px' }}>Evidence Vault</div>
-            <button className="btn-secondary" style={{ fontSize: '11px', padding: '5px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <UploadIcon /> INGEST
-            </button>
           </div>
 
           <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {/* Toggles */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <div style={{ border: '1px solid #c6c6cd', borderRadius: '2px', padding: '10px 12px' }}>
-                <div className="label-caps" style={{ marginBottom: '8px' }}>Attorney Privilege</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '34px', height: '18px', background: '#131b2e', borderRadius: '9px', position: 'relative', cursor: 'pointer' }}>
-                    <div style={{ width: '14px', height: '14px', background: 'white', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px' }} />
-                  </div>
-                  <span style={{ fontSize: '11px', fontWeight: 700 }}>ON</span>
-                </div>
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
               <div style={{ border: '1px solid #c6c6cd', borderRadius: '2px', padding: '10px 12px' }}>
                 <div className="label-caps" style={{ marginBottom: '8px' }}>Legal Hold</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => updateCase({ is_legal_hold: !caseData.is_legal_hold })}>
@@ -331,7 +317,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 <div>
   <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '5px 0', borderBottom: '1px solid #c6c6cd', marginBottom: '6px' }}>
     <div className="label-caps">Artifact</div>
-    <div className="label-caps">SHA-256 / Size</div>
+    <div className="label-caps">Size</div>
   </div>
   
   {/* 1. Render Whistleblower uploads attached to CaseData */}
@@ -367,7 +353,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             {ev.is_privileged && <span className="badge badge-medium" style={{ fontSize: '10px', padding: '1px 5px' }}>PRIVILEGED</span>}
           </div>
         </div>
-        <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#76777d' }}>{ev.file_hash?.substring(0, 8)}...</div>
+        <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#76777d' }}>{ev.file_hash ? `${ev.file_hash.substring(0, 8)}...` : '—'}</div>
       </div>
     ))
   )}
@@ -375,23 +361,16 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
             {/* Chain of custody */}
             <div style={{ border: '1px solid #c6c6cd', borderRadius: '2px', padding: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '10px' }}>
-                <ChainIcon />
-                <div className="label-caps" style={{ margin: 0 }}>Legal Chain of Custody</div>
-              </div>
+              <div className="label-caps" style={{ marginBottom: '10px' }}>Intake Record</div>
               {[
-                { label: 'Custodian', value: 'Internal Audit (HQ)' },
-                { label: 'Collected By', value: 'System (Auto)' },
-                { label: 'Collection Date', value: new Date(caseData.report_date).toLocaleDateString('en-IN') },
+                { label: 'Received via', value: 'Anonymous web form' },
+                { label: 'Received on', value: new Date(caseData.report_date).toLocaleDateString('en-IN') },
               ].map(row => (
                 <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #c6c6cd', fontSize: '12px' }}>
                   <span style={{ color: '#76777d' }}>{row.label}</span>
                   <span style={{ fontWeight: 600 }}>{row.value}</span>
                 </div>
               ))}
-              <button className="btn-secondary" style={{ width: '100%', marginTop: '10px', fontSize: '11px', padding: '7px', textTransform: 'uppercase', letterSpacing: '0.06em' }} onClick={generateSAR}>
-                GENERATE CERTIFICATE
-              </button>
             </div>
 
             {/* Case metadata */}

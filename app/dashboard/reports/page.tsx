@@ -296,7 +296,7 @@ function ReportsContent() {
                 <tr><td colSpan={7} style={{ textAlign: 'center', padding: '32px', color: '#76777d' }}>Loading...</td></tr>
               ) : cases.slice(0, 8).map(c => (
                 <tr key={c.id} onClick={() => window.location.href = `/dashboard/cases/${c.id}`}>
-                  <td style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>FW-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</td>
+                  <td style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '12px' }}>VG-{new Date(c.report_date).getFullYear()}-{String(c.id).padStart(4, '0')}</td>
                   <td style={{ textTransform: 'capitalize', fontSize: '12px' }}>{c.fraud_type?.replace(/_/g, ' ')}</td>
                   <td><span className={`badge badge-${c.severity}`}>{c.severity?.toUpperCase()}</span></td>
                   <td style={{ fontSize: '12px' }}>{c.department || '—'}</td>
